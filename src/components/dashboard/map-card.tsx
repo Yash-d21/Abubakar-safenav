@@ -13,7 +13,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
-import { GoogleMap, useJsApiLoader, DirectionsRenderer, Circle } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Circle, Polyline } from '@react-google-maps/api';
+import { generateRoute } from '@/ai/flows/generate-route';
 
 const containerStyle = {
   width: '100%',
@@ -31,10 +32,13 @@ const redZones = [
   { center: { lat: 40.710, lng: -74.010 }, radius: 150 },
 ];
 
+const originCoords = { lat: 40.707, lng: -74.013 };
+const destinationCoords = { lat: 40.72, lng: -73.99 };
+
+
 export function MapCard() {
   const { toast } = useToast()
-  const [showRoute, setShowRoute] = useState(false);
-  const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
+  const [routePolyline, setRoutePolyline] = useState<google.maps.LatLngLiteral[]>([]);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -43,15 +47,17 @@ export function MapCard() {
 
   const handleFindRoute = async () => {
     if (!isLoaded) return;
-    const directionsService = new google.maps.DirectionsService();
+    
     try {
-      const results = await directionsService.route({
-        origin: '123 Safe St, New York, NY',
-        destination: '800 Secure Ave, New York, NY',
-        travelMode: google.maps.TravelMode.DRIVING,
+      const result = await generateRoute({
+        origin: `${originCoords.lat},${originCoords.lng}`,
+        destination: `${destinationCoords.lat},${destinationCoords.lng}`,
+        transportMode: 'car',
+        avoid: redZones.map(z => ({ lat: z.center.lat, lng: z.center.lng, radius: z.radius})),
       });
-      setDirectionsResponse(results);
-      setShowRoute(true);
+
+      setRoutePolyline(result.polyline);
+      
       toast({
         title: "Safest Route Found",
         description: "We've prioritized your safety. This route avoids all red zones.",
@@ -98,15 +104,14 @@ export function MapCard() {
                 zoomControl: true,
               }}
             >
-              {directionsResponse && showRoute && (
-                <DirectionsRenderer 
-                  directions={directionsResponse} 
-                  options={{ 
-                    polylineOptions: { 
-                      strokeColor: 'hsl(var(--primary))',
-                      strokeWeight: 4,
-                    }
-                  }} 
+              {routePolyline.length > 0 && (
+                <Polyline
+                    path={routePolyline}
+                    options={{
+                        strokeColor: 'hsl(var(--primary))',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 6,
+                    }}
                 />
               )}
                {redZones.map((zone, index) => (
