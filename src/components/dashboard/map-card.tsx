@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -12,21 +11,59 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, MapPin } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
+import { GoogleMap, useJsApiLoader, DirectionsRenderer, Circle } from '@react-google-maps/api';
+
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+  borderRadius: '0.5rem',
+};
+
+const center = {
+  lat: 40.7128,
+  lng: -74.0060
+};
+
+const redZones = [
+  { center: { lat: 40.715, lng: -74.002 }, radius: 200 },
+  { center: { lat: 40.710, lng: -74.010 }, radius: 150 },
+];
 
 export function MapCard() {
   const { toast } = useToast()
-  const mapImage = PlaceHolderImages.find((p) => p.id === 'dashboard-map');
   const [showRoute, setShowRoute] = useState(false);
+  const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
 
-  const handleFindRoute = () => {
-    setShowRoute(true);
-    toast({
-      title: "Safest Route Found",
-      description: "We've prioritized your safety. This route avoids all red zones.",
-    })
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""
+  });
+
+  const handleFindRoute = async () => {
+    if (!isLoaded) return;
+    const directionsService = new google.maps.DirectionsService();
+    try {
+      const results = await directionsService.route({
+        origin: '123 Safe St, New York, NY',
+        destination: '800 Secure Ave, New York, NY',
+        travelMode: google.maps.TravelMode.DRIVING,
+      });
+      setDirectionsResponse(results);
+      setShowRoute(true);
+      toast({
+        title: "Safest Route Found",
+        description: "We've prioritized your safety. This route avoids all red zones.",
+      });
+    } catch (error) {
+      console.error('Error fetching directions', error);
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not find a route.",
+      });
+    }
   };
 
   return (
@@ -41,58 +78,57 @@ export function MapCard() {
         <div className="flex flex-col sm:flex-row items-center gap-2 mb-4">
           <div className="relative w-full">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Current Location" className="pl-9" defaultValue="123 Safe St, Your City" />
+            <Input placeholder="Current Location" className="pl-9" defaultValue="123 Safe St, New York, NY" />
           </div>
           <ArrowRight className="hidden sm:block text-muted-foreground shrink-0" />
           <div className="relative w-full">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Destination" className="pl-9" defaultValue="800 Secure Ave, Your City" />
+            <Input placeholder="Destination" className="pl-9" defaultValue="800 Secure Ave, New York, NY" />
           </div>
-          <Button onClick={handleFindRoute} className="w-full sm:w-auto">Find Route</Button>
+          <Button onClick={handleFindRoute} className="w-full sm:w-auto" disabled={!isLoaded}>Find Route</Button>
         </div>
         <div className="aspect-[4/3] w-full rounded-lg overflow-hidden relative bg-muted">
-          {mapImage && (
-            <Image
-              src={mapImage.imageUrl}
-              alt="Map"
-              fill
-              className="object-cover"
-              data-ai-hint={mapImage.imageHint}
-            />
+          {isLoaded ? (
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={center}
+              zoom={14}
+              options={{
+                disableDefaultUI: true,
+                zoomControl: true,
+              }}
+            >
+              {directionsResponse && showRoute && (
+                <DirectionsRenderer 
+                  directions={directionsResponse} 
+                  options={{ 
+                    polylineOptions: { 
+                      strokeColor: 'hsl(var(--primary))',
+                      strokeWeight: 4,
+                    }
+                  }} 
+                />
+              )}
+               {redZones.map((zone, index) => (
+                <Circle
+                  key={index}
+                  center={zone.center}
+                  radius={zone.radius}
+                  options={{
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#FF0000',
+                    fillOpacity: 0.35,
+                  }}
+                />
+              ))}
+            </GoogleMap>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p>Loading map...</p>
+            </div>
           )}
-          {/* Red Zone Overlays */}
-          <div className="absolute top-[20%] left-[30%] w-24 h-24 bg-red-500/30 rounded-full animate-pulse border-2 border-red-500" />
-          <div className="absolute bottom-[15%] right-[25%] w-20 h-20 bg-red-500/30 rounded-full animate-pulse border-2 border-red-500" />
-          
-          {/* Safest Route Overlay */}
-          <svg
-            className={cn(
-              'absolute inset-0 w-full h-full transition-opacity duration-1000',
-              showRoute ? 'opacity-100' : 'opacity-0'
-            )}
-            viewBox="0 0 400 300"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M 50 250 Q 150 200, 200 150 T 350 50"
-              stroke="hsl(var(--primary))"
-              strokeWidth="4"
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray="8 8"
-              className="animate-dash"
-            />
-          </svg>
-          <style jsx>{`
-            @keyframes dash {
-              to {
-                stroke-dashoffset: -32;
-              }
-            }
-            .animate-dash {
-              animation: dash 1s linear infinite;
-            }
-          `}</style>
         </div>
       </CardContent>
     </Card>
