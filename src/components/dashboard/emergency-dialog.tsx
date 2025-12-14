@@ -20,13 +20,13 @@ type EmergencyDialogProps = {
 };
 
 export function EmergencyDialog({ open, onOpenChange }: EmergencyDialogProps) {
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(5);
   const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
     if (!open) {
-      setCountdown(10);
+      setCountdown(5);
       return;
     }
 
@@ -53,7 +53,7 @@ export function EmergencyDialog({ open, onOpenChange }: EmergencyDialogProps) {
     })
   }
 
-  const progress = (countdown / 10) * 100;
+  const progress = (countdown / 5) * 100;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
