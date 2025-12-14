@@ -11,6 +11,7 @@ import { Send, Phone, Siren } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useRouter } from 'next/navigation';
 
 const containerStyle = {
   width: '100%',
@@ -38,6 +39,7 @@ const initialComments: Comment[] = [
 
 export default function SOSPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral>(initialCenter);
@@ -112,33 +114,33 @@ export default function SOSPage() {
   }
   
   const handleEndSOS = () => {
-      // In a real app, this would securely end the session.
-      // For now, we'll just show a toast.
       toast({
           title: "SOS Mode Deactivated",
           description: "You have marked yourself as safe. Your guardians have been notified.",
       });
-      // Here you would redirect or change state, e.g., router.push('/dashboard');
+      router.push('/dashboard');
   }
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex flex-col p-4 gap-4">
-        <div className="flex items-center justify-between bg-destructive text-destructive-foreground p-3 rounded-lg">
-            <div className="flex items-center gap-2">
-                 <Siren className="w-6 h-6 animate-pulse" />
-                <h1 className="text-xl font-bold font-headline">SOS Mode ACTIVE</h1>
-            </div>
-            <Button variant="destructive" className="bg-destructive-foreground text-destructive hover:bg-destructive-foreground/90" onClick={handleEndSOS}>End SOS</Button>
+    <div className="fixed inset-0 z-50 flex h-screen flex-col bg-background p-4 gap-4">
+        <div className="flex-shrink-0">
+          <div className="flex items-center justify-between bg-destructive text-destructive-foreground p-3 rounded-lg">
+              <div className="flex items-center gap-2">
+                  <Siren className="w-6 h-6 animate-pulse" />
+                  <h1 className="text-xl font-bold font-headline">SOS Mode ACTIVE</h1>
+              </div>
+              <Button variant="destructive" className="bg-destructive-foreground text-destructive hover:bg-destructive-foreground/90" onClick={handleEndSOS}>End SOS</Button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 overflow-hidden">
             {/* Left Column: Video and Map */}
             <div className="lg:col-span-2 space-y-4 flex flex-col min-h-0">
-                <Card className="flex-1 flex flex-col">
+                <Card className="flex-1 flex flex-col min-h-0">
                     <CardHeader>
                         <CardTitle>Live Feed</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 flex items-center justify-center bg-black rounded-b-lg">
+                    <CardContent className="flex-1 flex items-center justify-center bg-black rounded-b-lg relative">
                        <video ref={videoRef} className="w-full h-full object-cover rounded-md" autoPlay muted playsInline />
                        {hasCameraPermission === false && (
                            <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-md">
@@ -153,7 +155,7 @@ export default function SOSPage() {
                        )}
                     </CardContent>
                 </Card>
-                <Card className="flex-1 flex flex-col">
+                <Card className="flex-1 flex flex-col min-h-0">
                      <CardHeader>
                         <CardTitle>Live Location</CardTitle>
                     </CardHeader>
@@ -173,7 +175,7 @@ export default function SOSPage() {
                     <CardHeader>
                         <CardTitle>Guardian Chat</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 flex flex-col gap-4">
+                    <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
                         <ScrollArea className="flex-1 pr-4 -mr-4">
                              <div className="space-y-4">
                                 {comments.map((comment, index) => {
@@ -196,7 +198,7 @@ export default function SOSPage() {
                                 })}
                              </div>
                         </ScrollArea>
-                        <form className="flex items-center gap-2" onSubmit={handleSendComment}>
+                        <form className="flex-shrink-0 flex items-center gap-2" onSubmit={handleSendComment}>
                             <Input placeholder="Type a message..." value={newComment} onChange={e => setNewComment(e.target.value)} />
                             <Button type="submit" size="icon" aria-label="Send Message">
                                 <Send className="w-4 h-4" />
