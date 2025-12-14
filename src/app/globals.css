@@ -86,3 +86,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+    .night-vision {
+        filter: grayscale(1) contrast(2) brightness(1.2) hue-rotate(100deg);
+    }
+}
