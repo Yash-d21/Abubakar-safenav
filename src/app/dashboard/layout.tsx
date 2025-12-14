@@ -13,6 +13,7 @@ import {
   SidebarFooter,
   SidebarInset,
   SidebarTrigger,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
@@ -24,6 +25,7 @@ import {
 import { Logo } from '@/components/logo';
 import { UserNav } from '@/components/user-nav';
 import { Toaster } from '@/components/ui/toaster';
+import { EmergencyButton } from '@/components/dashboard/emergency-button';
 
 export default function DashboardLayout({
   children,
@@ -93,6 +95,10 @@ export default function DashboardLayout({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
+          <div className="p-2">
+            <EmergencyButton />
+          </div>
+          <SidebarSeparator />
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={{ children: 'Logout' }}>
