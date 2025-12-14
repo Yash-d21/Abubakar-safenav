@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -13,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from "@/hooks/use-toast"
+import { Button } from '../ui/button';
 
 type EmergencyDialogProps = {
   open: boolean;
@@ -22,6 +22,7 @@ type EmergencyDialogProps = {
 export function EmergencyDialog({ open, onOpenChange }: EmergencyDialogProps) {
   const [countdown, setCountdown] = useState(10);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     if (!open) {
@@ -34,14 +35,15 @@ export function EmergencyDialog({ open, onOpenChange }: EmergencyDialogProps) {
       toast({
         variant: "destructive",
         title: "Emergency Alert Sent!",
-        description: "Authorities and your guardians have been notified.",
+        description: "Authorities and your guardians have been notified. Activating SOS mode.",
       });
+      router.push('/dashboard/sos');
       return;
     }
 
     const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     return () => clearTimeout(timer);
-  }, [countdown, open, onOpenChange, toast]);
+  }, [countdown, open, onOpenChange, toast, router]);
 
   const handleSafe = () => {
     onOpenChange(false);
@@ -69,12 +71,13 @@ export function EmergencyDialog({ open, onOpenChange }: EmergencyDialogProps) {
           <Progress value={progress} className="w-full" />
         </div>
         <AlertDialogFooter className="sm:justify-center">
-          <AlertDialogAction
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90"
+          <Button
+            variant="secondary"
+            className="w-full sm:w-auto"
             onClick={handleSafe}
           >
-            I&apos;m Safe
-          </AlertDialogAction>
+            I&apos;m Safe (Cancel)
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

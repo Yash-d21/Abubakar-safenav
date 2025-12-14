@@ -37,6 +37,15 @@ export default function DashboardLayout({
   const isActive = (path: string) => {
     return pathname === path;
   };
+  
+  if (pathname === '/dashboard/sos') {
+    return (
+      <>
+        {children}
+        <Toaster />
+      </>
+    )
+  }
 
   return (
     <SidebarProvider>
