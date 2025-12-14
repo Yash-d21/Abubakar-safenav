@@ -7,12 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Phone, Siren, Video, VideoOff, Camera, Moon } from 'lucide-react';
+import { Send, Phone, Siren, Video, VideoOff, Camera, Moon, Mic, MicOff, Bot, BrainCircuit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { summarizeChat } from '@/ai/flows/summarize-chat';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const containerStyle = {
   width: '100%',
@@ -43,12 +45,17 @@ export default function SOSPage() {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral>(initialCenter);
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isNightVisionOn, setIsNightVisionOn] = useState(false);
+  const [isVoiceControlOn, setIsVoiceControlOn] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -93,6 +100,20 @@ export default function SOSPage() {
       { enableHighAccuracy: true }
     );
     
+    // Setup Speech Recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.lang = 'en-US';
+      recognition.onresult = (event) => {
+        const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+        handleVoiceCommand(command);
+      };
+      recognitionRef.current = recognition;
+    }
+
+
     return () => {
       // Stop camera stream and location watch
       if (videoRef.current && videoRef.current.srcObject) {
@@ -100,21 +121,33 @@ export default function SOSPage() {
         stream.getTracks().forEach(track => track.stop());
       }
       navigator.geolocation.clearWatch(watchId);
+      recognitionRef.current?.stop();
     };
   }, [toast]);
   
-  const handleSendComment = (e: React.FormEvent) => {
+  const handleSendComment = (e: React.FormEvent, text?: string) => {
     e.preventDefault();
-    if(newComment.trim()){
+    const commentText = text || newComment;
+    if(commentText.trim()){
         const newCommentObj: Comment = {
             author: 'Jane (You)',
             avatarId: 'user-avatar-1',
-            text: newComment,
+            text: commentText,
             time: 'Just now'
         };
         setComments(prev => [...prev, newCommentObj]);
         setNewComment('');
     }
+  }
+
+  const handleGuardianAction = (text: string) => {
+     const newCommentObj: Comment = {
+        author: 'John (Guardian)',
+        avatarId: 'guardian-avatar-1',
+        text: text,
+        time: 'Just now'
+    };
+    setComments(prev => [...prev, newCommentObj]);
   }
   
   const handleEndSOS = () => {
@@ -133,7 +166,6 @@ export default function SOSPage() {
       if (stream) {
         mediaRecorderRef.current = new MediaRecorder(stream);
         mediaRecorderRef.current.ondataavailable = (event) => {
-            // In a real app, you would upload these chunks to a server
             console.log('Recorded chunk:', event.data);
         };
         mediaRecorderRef.current.onstop = () => {
@@ -141,7 +173,7 @@ export default function SOSPage() {
             toast({ title: 'Recording Saved', description: 'Your video has been securely stored.'});
             setIsRecording(false);
         };
-        mediaRecorderRef.current.start(1000); // Fire ondataavailable every second
+        mediaRecorderRef.current.start(1000);
         toast({ title: 'Recording Started', description: 'Your live feed is now being recorded.' });
         setIsRecording(true);
       }
@@ -157,10 +189,58 @@ export default function SOSPage() {
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
           const dataUrl = canvas.toDataURL('image/png');
-          // In a real app, you'd upload this dataUrl to a server.
           console.log('Photo captured:', dataUrl.substring(0, 50) + '...');
           toast({ title: 'Photo Captured', description: 'A snapshot has been securely saved.' });
       }
+  };
+
+  const handleToggleVoiceControl = () => {
+    if (isVoiceControlOn) {
+      recognitionRef.current?.stop();
+      setIsVoiceControlOn(false);
+      toast({ title: 'Voice Control Disabled' });
+    } else if (recognitionRef.current) {
+      recognitionRef.current.start();
+      setIsVoiceControlOn(true);
+      toast({ title: 'Voice Control Enabled', description: 'Say "start recording", "capture photo", or "send help message".' });
+    } else {
+      toast({ variant: 'destructive', title: 'Voice control not supported on this browser.'});
+    }
+  };
+
+  const handleVoiceCommand = (command: string) => {
+    toast({ title: 'Voice Command Heard', description: `"${command}"` });
+    if (command.includes('start recording')) {
+      if (!isRecording) handleToggleRecording();
+    } else if (command.includes('stop recording')) {
+      if (isRecording) handleToggleRecording();
+    } else if (command.includes('capture photo')) {
+      handleCapturePhoto();
+    } else if (command.includes('send help message')) {
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      handleSendComment(fakeEvent, "I need help, I can't talk right now.");
+      toast({ title: "Help message sent." });
+    }
+  };
+  
+  const handleSummarize = async () => {
+    setIsSummarizing(true);
+    try {
+        const chatHistory = comments.map(c => `${c.author}: ${c.text}`).join('\n');
+        const result = await summarizeChat({ chatHistory });
+        const summaryComment: Comment = {
+            author: 'AI Guardian',
+            avatarId: 'ai-avatar',
+            text: result.summary,
+            time: 'Just now'
+        };
+        setComments(prev => [...prev, summaryComment]);
+    } catch (error) {
+        console.error("Error summarizing chat:", error);
+        toast({ variant: 'destructive', title: 'Could not generate summary.' });
+    } finally {
+        setIsSummarizing(false);
+    }
   };
 
 
@@ -181,7 +261,6 @@ export default function SOSPage() {
           </div>
   
           <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-            {/* Left Column: Video and Map */}
             <div className="flex flex-col gap-4 lg:col-span-2 xl:col-span-3">
               <Card className="flex flex-1 flex-col">
                 <CardHeader>
@@ -209,9 +288,13 @@ export default function SOSPage() {
                       <Camera />
                       <span>Capture</span>
                     </Button>
-                    <Button variant="secondary" onClick={() => setIsNightVisionOn((prev) => !prev)} size="sm" data-active={isNightVisionOn} className="data-[active=true]:bg-green-600 data-[active=true]:text-white h-auto flex-col gap-1 py-2" aria-label="Toggle Night Vision">
+                    <Button variant="secondary" onClick={() => setIsNightVisionOn((prev) => !prev)} size="sm" data-active={isNightVisionOn} className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground h-auto flex-col gap-1 py-2" aria-label="Toggle Night Vision">
                       <Moon />
                       <span>Night Vision</span>
+                    </Button>
+                     <Button variant={isVoiceControlOn ? 'default' : 'secondary'} onClick={handleToggleVoiceControl} size="sm" className="h-auto flex-col gap-1 py-2" aria-label="Toggle Voice Control">
+                      {isVoiceControlOn ? <MicOff/> : <Mic />}
+                      <span>{isVoiceControlOn ? 'Voice Off' : 'Voice On'}</span>
                     </Button>
                   </div>
                 </CardContent>
@@ -232,24 +315,32 @@ export default function SOSPage() {
               </Card>
             </div>
   
-            {/* Right Column: Chat */}
             <div className="flex flex-col lg:col-span-1 xl:col-span-1">
               <Card className="flex flex-1 flex-col">
-                <CardHeader>
+                <CardHeader className="flex-row items-center justify-between">
                   <CardTitle>Guardian Chat</CardTitle>
+                   <Button variant="outline" size="sm" onClick={handleSummarize} disabled={isSummarizing}>
+                      {isSummarizing ? <Skeleton className="h-4 w-4 animate-spin" /> : <BrainCircuit />}
+                      <span className="ml-2">Get Summary</span>
+                  </Button>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden">
                   <ScrollArea className="-mr-4 flex-1 pr-4">
                     <div className="space-y-4">
                       {comments.map((comment, index) => {
                         const avatar = PlaceHolderImages.find((p) => p.id === comment.avatarId);
+                        const isAI = comment.author === 'AI Guardian';
                         return (
-                          <div key={index} className="flex items-start gap-3">
+                          <div key={index} className={cn("flex items-start gap-3", isAI && 'items-center')}>
                             <Avatar className="h-8 w-8">
-                              {avatar && <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />}
-                              <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                              {isAI ? <Bot className="h-8 w-8 text-primary" /> : (
+                                <>
+                                  {avatar && <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />}
+                                  <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                                </>
+                              )}
                             </Avatar>
-                            <div className="flex-1 rounded-lg bg-muted p-3">
+                            <div className={cn("flex-1 rounded-lg p-3", isAI ? 'bg-primary/10 border border-primary/20' : 'bg-muted')}>
                               <div className="flex items-center justify-between">
                                 <p className="text-sm font-semibold">{comment.author}</p>
                                 <p className="text-xs text-muted-foreground">{comment.time}</p>
@@ -261,12 +352,18 @@ export default function SOSPage() {
                       })}
                     </div>
                   </ScrollArea>
-                  <form className="flex flex-shrink-0 items-center gap-2" onSubmit={handleSendComment}>
-                    <Input placeholder="Type a message..." value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-                    <Button type="submit" size="icon" aria-label="Send Message">
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </form>
+                   <div className="flex-shrink-0 space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                            <Button variant="outline" onClick={() => handleSendComment({} as React.FormEvent, 'I need help urgently!')}>Send Help Message</Button>
+                            <Button variant="outline" onClick={() => handleGuardianAction(`I'm on my way.`)}>On My Way</Button>
+                        </div>
+                        <form className="flex items-center gap-2" onSubmit={handleSendComment}>
+                            <Input placeholder="Type a message..." value={newComment} onChange={(e) => setNewComment(e.target.value)} />
+                            <Button type="submit" size="icon" aria-label="Send Message">
+                                <Send className="h-4 w-4" />
+                            </Button>
+                        </form>
+                    </div>
                 </CardContent>
               </Card>
             </div>
