@@ -11,11 +11,12 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, MapPin, Share2 } from 'lucide-react';
+import { ArrowRight, MapPin, Share2, AlertTriangle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import { GoogleMap, useJsApiLoader, Circle, Polyline } from '@react-google-maps/api';
 import { generateRoute } from '@/ai/flows/generate-route';
+import { detectHazards } from '@/ai/flows/detect-hazards';
 
 const containerStyle = {
   width: '100%',
@@ -40,6 +41,7 @@ const destinationCoords = { lat: 40.72, lng: -73.99 };
 export function MapCard() {
   const { toast } = useToast()
   const [routePolyline, setRoutePolyline] = useState<google.maps.LatLngLiteral[]>([]);
+  const [isCheckingHazards, setIsCheckingHazards] = useState(false);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -80,6 +82,34 @@ export function MapCard() {
       description: "A shareable link to your live location has been sent to your guardians.",
     });
   };
+
+  const handleCheckHazards = async () => {
+    setIsCheckingHazards(true);
+    try {
+        const result = await detectHazards({ routeDescription: "A car route from downtown to midtown New York." });
+        if (result.hasHazards) {
+            toast({
+                variant: "destructive",
+                title: "Hazard Alert!",
+                description: result.hazardSummary,
+            });
+        } else {
+            toast({
+                title: "All Clear",
+                description: "No immediate environmental hazards detected on your route.",
+            });
+        }
+    } catch (error) {
+        console.error("Error checking for hazards:", error);
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not check for hazards at this time.",
+        });
+    } finally {
+        setIsCheckingHazards(false);
+    }
+  }
 
   return (
     <Card>
@@ -146,10 +176,14 @@ export function MapCard() {
         </div>
       </CardContent>
       {routePolyline.length > 0 && (
-        <CardFooter className="border-t pt-6">
+        <CardFooter className="border-t pt-6 flex-wrap gap-2">
             <Button onClick={handleShareTrip} className="w-full sm:w-auto">
               <Share2 className="mr-2 h-4 w-4" />
               Share Trip with Guardians
+            </Button>
+            <Button onClick={handleCheckHazards} variant="outline" className="w-full sm:w-auto" disabled={isCheckingHazards}>
+                {isCheckingHazards ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <AlertTriangle className="mr-2 h-4 w-4" />}
+              Check for Hazards
             </Button>
         </CardFooter>
       )}

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function SettingsPage() {
@@ -62,6 +63,33 @@ export default function SettingsPage() {
             </CardContent>
             <CardFooter>
                 <Button>Save Preferences</Button>
+            </CardFooter>
+        </Card>
+         <Card className="lg:col-span-3">
+            <CardHeader>
+                <CardTitle>Personalized Risk Profile</CardTitle>
+                <CardDescription>Influence how your routes are calculated based on your risk tolerance.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <RadioGroup defaultValue="balanced" className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="balanced" id="balanced" />
+                        <Label htmlFor="balanced" className="font-normal">
+                           <span className="font-semibold">Balanced (Recommended)</span>
+                           <p className="text-xs text-muted-foreground">Prioritizes a mix of speed and safety, avoiding only high-risk zones.</p>
+                        </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="max-safety" id="max-safety" />
+                         <Label htmlFor="max-safety" className="font-normal">
+                           <span className="font-semibold">Maximum Safety</span>
+                           <p className="text-xs text-muted-foreground">Avoids all potential risk zones, even if it means a significantly longer route.</p>
+                        </Label>
+                    </div>
+                </RadioGroup>
+            </CardContent>
+            <CardFooter>
+                <Button>Save Risk Profile</Button>
             </CardFooter>
         </Card>
       </div>

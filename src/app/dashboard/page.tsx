@@ -2,6 +2,7 @@ import { MapCard } from '@/components/dashboard/map-card';
 import { DistressDetectorCard } from '@/components/dashboard/distress-detector-card';
 import { SafetyScoreCard } from '@/components/dashboard/safety-score-card';
 import { SafetyCheckInCard } from '@/components/dashboard/safety-check-in-card';
+import { FollowMeHomeCard } from '@/components/dashboard/follow-me-home-card';
 
 export default function DashboardPage() {
   return (
@@ -12,6 +13,7 @@ export default function DashboardPage() {
         <div className="space-y-6 lg:col-span-1">
             <SafetyScoreCard />
             <SafetyCheckInCard />
+            <FollowMeHomeCard />
             <DistressDetectorCard />
         </div>
     </div>
