@@ -5,12 +5,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, MapPin } from 'lucide-react';
+import { ArrowRight, MapPin, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
 import { GoogleMap, useJsApiLoader, Circle, Polyline } from '@react-google-maps/api';
@@ -47,6 +48,7 @@ export function MapCard() {
 
   const handleFindRoute = async () => {
     if (!isLoaded) return;
+    setRoutePolyline([]);
     
     try {
       const result = await generateRoute({
@@ -70,6 +72,13 @@ export function MapCard() {
         description: "Could not find a route.",
       });
     }
+  };
+
+  const handleShareTrip = () => {
+    toast({
+      title: "Trip Shared!",
+      description: "A shareable link to your live location has been sent to your guardians.",
+    });
   };
 
   return (
@@ -136,6 +145,14 @@ export function MapCard() {
           )}
         </div>
       </CardContent>
+      {routePolyline.length > 0 && (
+        <CardFooter className="border-t pt-6">
+            <Button onClick={handleShareTrip} className="w-full sm:w-auto">
+              <Share2 className="mr-2 h-4 w-4" />
+              Share Trip with Guardians
+            </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }

@@ -17,10 +17,10 @@ import {
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
-  ShieldCheck,
   Users,
   Settings,
   LogOut,
+  MessageSquare,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { UserNav } from '@/components/user-nav';
@@ -77,6 +77,18 @@ export default function DashboardLayout({
                 <Link href="/dashboard/guardians">
                   <Users />
                   <span>Guardians</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive('/dashboard/community')}
+                tooltip={{ children: 'Community' }}
+              >
+                <Link href="/dashboard/community">
+                  <MessageSquare />
+                  <span>Community</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
