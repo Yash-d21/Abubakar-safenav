@@ -76,6 +76,10 @@ body {
     --sidebar-border: 231 22% 15%;
     --sidebar-ring: 36 100% 50%;
   }
+  :root.dark, .dark {
+    --background: 231 22% 9%;
+    --primary: 231 48% 58%;
+  }
 }
 
 @layer base {
