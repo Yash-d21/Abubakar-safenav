@@ -183,29 +183,33 @@ export default function SOSPage() {
                     <CardHeader>
                         <CardTitle>Live Feed</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-1 flex items-center justify-center bg-black rounded-b-lg relative p-0">
-                       <video ref={videoRef} className={cn("w-full h-full object-cover rounded-b-md", isNightVisionOn && 'night-vision')} autoPlay muted playsInline />
-                       {hasCameraPermission === false && (
-                           <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-b-md">
-                                <Alert variant="destructive" className="w-auto">
-                                      <Siren className="h-4 w-4"/>
-                                      <AlertTitle>Camera Access Required</AlertTitle>
-                                      <AlertDescription>
-                                        Camera is required to share your live feed.
-                                      </AlertDescription>
-                              </Alert>
-                           </div>
-                       )}
-                       <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-2 bg-black/50 p-2 rounded-lg">
-                            <Button variant={isRecording ? "destructive" : "secondary"} onClick={handleToggleRecording} size="sm" aria-label="Toggle Recording">
-                                {isRecording ? <VideoOff className="mr-2"/> : <Video className="mr-2" />}
-                                {isRecording ? 'Stop' : 'Record'}
+                    <CardContent className="flex-1 flex gap-4 bg-black rounded-b-lg p-2">
+                       <div className="flex-1 relative">
+                          <video ref={videoRef} className={cn("w-full h-full object-cover rounded-md", isNightVisionOn && 'night-vision')} autoPlay muted playsInline />
+                          {hasCameraPermission === false && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-md">
+                                  <Alert variant="destructive" className="w-auto">
+                                        <Siren className="h-4 w-4"/>
+                                        <AlertTitle>Camera Access Required</AlertTitle>
+                                        <AlertDescription>
+                                          Camera is required to share your live feed.
+                                        </AlertDescription>
+                                </Alert>
+                              </div>
+                          )}
+                       </div>
+                       <div className="flex flex-col justify-center gap-2 bg-black/50 p-2 rounded-lg">
+                            <Button variant={isRecording ? "destructive" : "secondary"} onClick={handleToggleRecording} size="sm" aria-label="Toggle Recording" className="flex-col h-auto py-2 gap-1">
+                                {isRecording ? <VideoOff/> : <Video />}
+                                <span>{isRecording ? 'Stop' : 'Record'}</span>
                             </Button>
-                            <Button variant="secondary" onClick={handleCapturePhoto} size="sm" aria-label="Capture Photo">
-                                <Camera className="mr-2" /> Capture
+                            <Button variant="secondary" onClick={handleCapturePhoto} size="sm" aria-label="Capture Photo" className="flex-col h-auto py-2 gap-1">
+                                <Camera />
+                                <span>Capture</span>
                             </Button>
-                            <Button variant="secondary" onClick={() => setIsNightVisionOn(prev => !prev)} size="sm" data-active={isNightVisionOn} className="data-[active=true]:bg-green-600 data-[active=true]:text-white" aria-label="Toggle Night Vision">
-                                <Moon className="mr-2" /> Night Vision
+                            <Button variant="secondary" onClick={() => setIsNightVisionOn(prev => !prev)} size="sm" data-active={isNightVisionOn} className="flex-col h-auto py-2 gap-1 data-[active=true]:bg-green-600 data-[active=true]:text-white" aria-label="Toggle Night Vision">
+                                <Moon/>
+                                <span>Night Vision</span>
                             </Button>
                        </div>
                     </CardContent>
