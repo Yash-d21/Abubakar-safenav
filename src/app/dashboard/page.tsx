@@ -5,12 +5,14 @@ import { SafetyCheckInCard } from '@/components/dashboard/safety-check-in-card';
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
-        <MapCard />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <DistressDetectorCard />
+    <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+            <MapCard />
+        </div>
+        <div className="space-y-6 lg:col-span-1">
             <SafetyScoreCard />
             <SafetyCheckInCard />
+            <DistressDetectorCard />
         </div>
     </div>
   );
