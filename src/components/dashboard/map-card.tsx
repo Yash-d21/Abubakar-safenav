@@ -55,12 +55,12 @@ export function MapCard() {
 
   const hazardLocations = [
     { cx: "120", cy: "150" },
-    { cx: "300", cy: "100" },
+    { cx: "300", cy: "200" },
   ];
 
   const safePois = [
-      { component: Shield, x: 160, y: 190, color: 'blue' },
-      { component: Hospital, x: 270, y: 110, color: 'green' },
+      { component: Shield, x: 160, y: 190, color: 'blue', label: 'Police' },
+      { component: Hospital, x: 270, y: 110, color: 'green', label: 'Hospital' },
   ]
 
   return (
@@ -119,6 +119,7 @@ export function MapCard() {
                         <g key={index} transform={`translate(${Poi.x - 12}, ${Poi.y - 12})`}>
                             <rect x="0" y="0" width="24" height="24" rx="6" fill="white" stroke={Poi.color} strokeWidth="2" />
                             <Poi.component className="text-foreground" x="4" y="4" width="16" height="16" stroke={Poi.color} />
+                             <text x="30" y="16" fontSize="10" fontWeight="bold" fill="black" stroke="white" strokeWidth="0.3px" paintOrder="stroke">{Poi.label}</text>
                         </g>
                     ))}
                 </svg>
