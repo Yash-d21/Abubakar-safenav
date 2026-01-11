@@ -45,7 +45,7 @@ export default function LandingPage() {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('https://img.sanishtech.com/u/61ae673f61c83bc18222c521e11de4f0.jpeg')",
+            backgroundImage: "url('https://img.sanishtech.com/u/90cdd71f15b91cddc2dfd7fbd9bf0e62.png')",
           }}
         />
         <div className="absolute inset-0 bg-black/60" />
@@ -89,9 +89,9 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold font-headline">A New Standard in Personal Safety</h2>
             <p className="mt-2 text-muted-foreground">Powered by cutting-edge AI and real-time data.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex overflow-x-auto space-x-8 pb-4">
             {features.map((feature, index) => (
-              <div key={index} className="bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl">
+              <div key={index} className="bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl w-80 flex-shrink-0">
                 <div className="bg-primary/10 text-primary p-3 rounded-full mb-4">
                   {feature.icon}
                 </div>
