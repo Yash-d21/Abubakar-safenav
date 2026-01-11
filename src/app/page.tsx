@@ -44,7 +44,7 @@ export default function LandingPage() {
        <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1473849153525-756d1a45f949?q=80&w=2070&auto=format&fit=crop')",
+          backgroundImage: "url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?q=80&w=2070&auto=format&fit=crop')",
         }}
       />
       <div className="absolute inset-0 bg-black/60" />
