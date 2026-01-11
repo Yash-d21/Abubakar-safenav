@@ -20,10 +20,12 @@ export function MapCard() {
   const { toast } = useToast();
   const [isRouteVisible, setIsRouteVisible] = useState(false);
   const [isCheckingHazards, setIsCheckingHazards] = useState(false);
+  const [showHazards, setShowHazards] = useState(false);
   
   const mapImage = PlaceHolderImages.find(p => p.id === 'dashboard-map');
 
   const handleFindRoute = async () => {
+    setShowHazards(false);
     setIsRouteVisible(true);
     toast({
       title: "Safest Route Found",
@@ -40,24 +42,22 @@ export function MapCard() {
 
   const handleCheckHazards = async () => {
     setIsCheckingHazards(true);
-    // Mocking the hazard check since the map is static
     setTimeout(() => {
-        const hasHazards = Math.random() > 0.5;
-        if (hasHazards) {
-            toast({
-                variant: "destructive",
-                title: "Hazard Alert!",
-                description: "A water main break has been reported on your route.",
-            });
-        } else {
-            toast({
-                title: "All Clear",
-                description: "No immediate environmental hazards detected on your route.",
-            });
-        }
+        setShowHazards(true);
+        toast({
+            variant: "destructive",
+            title: "Hazard Alert!",
+            description: "A water main break has been reported on your route. Hazardous areas are marked in red.",
+        });
         setIsCheckingHazards(false);
     }, 1500);
   }
+
+  const hazardLocations = [
+    { cx: "200", cy: "180" },
+    { cx: "280", cy: "120" },
+    { cx: "310", cy: "140" },
+  ];
 
   return (
     <Card>
@@ -108,6 +108,16 @@ export function MapCard() {
                     </path>
                     <circle cx="50" cy="250" r="5" fill="hsl(var(--primary))" />
                     <circle cx="350" cy="50" r="5" fill="hsl(var(--primary))" />
+                </svg>
+            )}
+            {showHazards && (
+               <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                    {hazardLocations.map((loc, index) => (
+                        <circle key={index} cx={loc.cx} cy={loc.cy} r="6" fill="red" stroke="white" strokeWidth="1.5" opacity="0.8">
+                           <animate attributeName="r" from="6" to="8" dur="1s" begin={`${index * 0.2}s`} repeatCount="indefinite" />
+                           <animate attributeName="opacity" from="0.8" to="0.5" dur="1s" begin={`${index * 0.2}s`} repeatCount="indefinite" />
+                        </circle>
+                    ))}
                 </svg>
             )}
         </div>
