@@ -1,5 +1,4 @@
 'use client';
-import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -13,11 +12,18 @@ import { detectDistress } from '@/ai/flows/detect-distress';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '../ui/skeleton';
 
-type Status = 'idle' | 'listening' | 'detecting' | 'confirmed' | 'clear';
+export type DistressDetectorStatus = 'idle' | 'listening' | 'detecting' | 'confirmed' | 'clear';
+export type DistressDetectorResult = { isDistressConfirmed: boolean, distressReason?: string } | null;
 
-export function DistressDetectorCard() {
-  const [status, setStatus] = useState<Status>('idle');
-  const [result, setResult] = useState<{ isDistressConfirmed: boolean, distressReason?: string } | null>(null);
+type DistressDetectorCardProps = {
+  status: DistressDetectorStatus;
+  setStatus: (status: DistressDetectorStatus) => void;
+  result: DistressDetectorResult;
+  setResult: (result: DistressDetectorResult) => void;
+};
+
+
+export function DistressDetectorCard({ status, setStatus, result, setResult }: DistressDetectorCardProps) {
   const { toast } = useToast();
 
   const handleSimulateDistress = async () => {

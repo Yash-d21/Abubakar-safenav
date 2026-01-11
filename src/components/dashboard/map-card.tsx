@@ -17,7 +17,11 @@ import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { SafetyCheckInDialog } from './safety-check-in-dialog';
 
-export function MapCard() {
+type MapCardProps = {
+  onFindRoute: () => void;
+};
+
+export function MapCard({ onFindRoute }: MapCardProps) {
   const { toast } = useToast();
   const [isRouteVisible, setIsRouteVisible] = useState(false);
   const [isCheckingHazards, setIsCheckingHazards] = useState(false);
@@ -33,6 +37,8 @@ export function MapCard() {
       title: "Safest Route Found",
       description: "We've prioritized your safety. This route avoids all red zones.",
     });
+
+    onFindRoute();
 
     // Start the safety check-in timer
     setTimeout(() => {
