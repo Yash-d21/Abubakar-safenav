@@ -41,37 +41,47 @@ const features = [
 export default function LandingPage() {
   return (
     <div className="bg-gray-900 text-white min-h-screen">
-      <header className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-           <Logo className="w-8 h-8 text-white" />
-           <span className="text-xl font-bold">Her-Way</span>
-        </div>
-        <nav>
-          <Link href="/login">
-            <Button variant="outline" className="text-white border-white hover:bg-gray-800 hover:text-white">
-              Login
-            </Button>
-          </Link>
-        </nav>
-      </header>
+       <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('https://storage.googleapis.com/aai-web-samples/user-provided/her-way-background.jpg')",
+        }}
+      />
+      <div className="absolute inset-0 bg-black/60" />
 
-      <main className="container mx-auto px-6 py-16 text-center">
-        <h1 className="text-4xl md:text-6xl font-extrabold font-headline leading-tight">
-          Navigate Your World with <span className="text-primary">Confidence</span>.
-        </h1>
-        <p className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-          Her-Way is your personal safety co-pilot, using AI to provide intelligent routing, proactive alerts, and an instant connection to help when you need it most.
-        </p>
-        <div className="mt-8">
-          <Link href="/signup">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Get Started for Free
-            </Button>
-          </Link>
-        </div>
-      </main>
+      <div className="relative z-10">
+        <header className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Logo className="w-8 h-8 text-white" />
+            <span className="text-xl font-bold">Her-Way</span>
+          </div>
+          <nav>
+            <Link href="/login">
+              <Button variant="outline" className="text-white border-white bg-transparent hover:bg-gray-800 hover:text-white">
+                Login
+              </Button>
+            </Link>
+          </nav>
+        </header>
 
-      <section id="features" className="bg-gray-950/50 py-20">
+        <main className="container mx-auto px-6 py-16 text-center">
+          <h1 className="text-4xl md:text-6xl font-extrabold font-headline leading-tight">
+            Navigate Your World with <span className="text-primary">Confidence</span>.
+          </h1>
+          <p className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+            Her-Way is your personal safety co-pilot, using AI to provide intelligent routing, proactive alerts, and an instant connection to help when you need it most.
+          </p>
+          <div className="mt-8">
+            <Link href="/signup">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                Get Started for Free
+              </Button>
+            </Link>
+          </div>
+        </main>
+      </div>
+
+      <section id="features" className="bg-gray-950/50 py-20 relative z-10">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">A New Standard in Personal Safety</h2>
@@ -91,7 +101,7 @@ export default function LandingPage() {
         </div>
       </section>
       
-       <footer className="container mx-auto px-6 py-8 text-center text-gray-500">
+       <footer className="container mx-auto px-6 py-8 text-center text-gray-500 relative z-10">
           <p>&copy; {new Date().getFullYear()} Her-Way. All rights reserved.</p>
        </footer>
     </div>
