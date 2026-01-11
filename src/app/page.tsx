@@ -87,9 +87,9 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold font-headline">A New Standard in Personal Safety</h2>
             <p className="mt-2 text-muted-foreground">Powered by cutting-edge AI and real-time data.</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex overflow-x-auto space-x-8 pb-8 -mx-6 px-6">
             {features.map((feature, index) => (
-              <div key={index} className="bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl">
+              <div key={index} className="flex-shrink-0 w-80 bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl">
                 <div className="bg-primary/10 text-primary p-3 rounded-full mb-4">
                   {feature.icon}
                 </div>
