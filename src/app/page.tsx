@@ -45,7 +45,7 @@ export default function LandingPage() {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('https://endless-copper-q9hpxzmgmc.edgeone.app')",
+            backgroundImage: "url('https://img.sanishtech.com/u/61ae673f61c83bc18222c521e11de4f0.jpeg')",
           }}
         />
         <div className="absolute inset-0 bg-black/60" />
