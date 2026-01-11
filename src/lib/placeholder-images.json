@@ -29,6 +29,18 @@
       "description": "Avatar for the AI assistant.",
       "imageUrl": "",
       "imageHint": "robot"
+    },
+    {
+      "id": "protected-user-2",
+      "description": "Avatar for a second protected user.",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0cmFpdCUyMHdvbWFufGVufDB8fHx8MTc4OTU0MDI4Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "guardian-map-1",
+      "description": "Map for guardian dashboard showing an active SOS location.",
+      "imageUrl": "https://images.unsplash.com/photo-1569336415962-a42945a473db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjaXR5JTIwbWFwJTIwbmlnaHR8ZW58MHx8fHwxNzkwMjY0NTcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city map night"
     }
   ]
 }
