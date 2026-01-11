@@ -9,11 +9,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Timer, ShieldCheck, BellRing } from 'lucide-react';
+import { Timer, ShieldCheck, BellRing, Square, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
 
-type Status = 'idle' | 'running' | 'safe' | 'alerted';
+type Status = 'idle' | 'running' | 'alerted';
 
 export function SafetyCheckInCard() {
   const [status, setStatus] = useState<Status>('idle');
@@ -51,17 +51,20 @@ export function SafetyCheckInCard() {
   };
 
   const markAsSafe = () => {
-    setStatus('safe');
-    setTimer(0);
+    setTimer(totalTime); // Reset the timer
     toast({
       title: 'You are Checked In!',
-      description: 'Your safety check-in was successful.',
+      description: `Your safety check-in was successful. Next check-in is in ${totalTime} seconds.`,
     });
   };
   
-  const reset = () => {
+  const stopCheckIn = () => {
     setStatus('idle');
     setTimer(0);
+    toast({
+      title: "Check-in Stopped",
+      description: "You have manually stopped the safety check-in.",
+    });
   }
 
   const progress = status === 'running' ? ((totalTime - timer) / totalTime) * 100 : 0;
@@ -72,8 +75,6 @@ export function SafetyCheckInCard() {
         return { icon: <Timer className="h-6 w-6" />, text: 'Start a timed safety check-in.' };
       case 'running':
         return { icon: <div className="text-2xl font-bold">{timer}s</div>, text: 'Check in before the timer runs out.' };
-      case 'safe':
-        return { icon: <ShieldCheck className="h-6 w-6 text-green-500" />, text: 'You have successfully checked in.' };
       case 'alerted':
         return { icon: <BellRing className="h-6 w-6 text-destructive" />, text: 'Check-in missed. Alert sent.' };
     }
@@ -97,20 +98,26 @@ export function SafetyCheckInCard() {
           
           {status === 'idle' && (
             <Button onClick={startCheckIn}>
-              <Timer className="mr-2 h-4 w-4" />
-              Start 30s Check-in
+              <Play className="mr-2 h-4 w-4" />
+              Start Check-in
             </Button>
           )}
 
           {status === 'running' && (
-            <Button onClick={markAsSafe} variant="secondary">
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              I'm Safe
-            </Button>
+            <div className="flex w-full gap-2">
+                <Button onClick={markAsSafe} className="flex-1">
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                I'm Safe
+                </Button>
+                <Button onClick={stopCheckIn} variant="secondary" className="flex-1">
+                    <Square className="mr-2 h-4 w-4" />
+                    Stop Check-in
+                </Button>
+            </div>
           )}
 
-          {(status === 'safe' || status === 'alerted') && (
-            <Button onClick={reset} variant="outline">
+          {status === 'alerted' && (
+            <Button onClick={startCheckIn} variant="outline">
               Start New Check-in
             </Button>
           )}
