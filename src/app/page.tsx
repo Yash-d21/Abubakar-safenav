@@ -54,7 +54,7 @@ export default function LandingPage() {
           <header className="container mx-auto px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <Logo className="w-8 h-8 text-white" />
-              <span className="text-xl font-bold">Her-Way</span>
+              <span className="text-xl font-bold text-white">Her-Way</span>
             </div>
             <nav>
               <Link href="/login">
@@ -89,9 +89,9 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold font-headline">A New Standard in Personal Safety</h2>
             <p className="mt-2 text-muted-foreground">Powered by cutting-edge AI and real-time data.</p>
           </div>
-          <div className="flex overflow-x-auto space-x-8 pb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl w-80 flex-shrink-0">
+              <div key={index} className="bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl">
                 <div className="bg-primary/10 text-primary p-3 rounded-full mb-4">
                   {feature.icon}
                 </div>
