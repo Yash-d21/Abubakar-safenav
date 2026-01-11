@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -54,7 +55,16 @@ export default function GuardianDashboard() {
                 </CardHeader>
                 {sosUser && (
                     <CardContent className="space-y-4">
-                        <MapCard onFindRoute={() => {}} />
+                       <div className="relative">
+                            <MapCard onFindRoute={() => {}} />
+                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                                <circle cx="200" cy="150" r="8" fill="green" stroke="white" strokeWidth="2" opacity="0.9">
+                                    <animate attributeName="r" from="8" to="12" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                                    <animate attributeName="opacity" from="0.9" to="0.3" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                                </circle>
+                                <circle cx="200" cy="150" r="5" fill="white" />
+                            </svg>
+                        </div>
                         <Card>
                             <CardHeader className="p-4">
                                 <CardTitle className="text-lg">{sosUser.name}'s Status</CardTitle>
