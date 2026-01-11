@@ -49,7 +49,8 @@ export default function SOSPage() {
   const [isVoiceControlOn, setIsVoiceControlOn] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   
-  const mapImage = PlaceHolderImages.find(p => p.id === 'dashboard-map');
+  const mapImage = PlaceHolderImages.find(p => p.id === 'guardian-map-1');
+  const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar-1');
 
   useEffect(() => {
     // Get camera permission
@@ -312,7 +313,7 @@ export default function SOSPage() {
                                 <div className="absolute -inset-2 animate-ping rounded-full bg-primary opacity-75"></div>
                                 <div className="relative rounded-full bg-primary p-2">
                                     <Avatar>
-                                        <AvatarImage src={PlaceHolderImages.find(p => p.id === 'user-avatar-1')?.imageUrl} />
+                                        {userAvatar && <AvatarImage src={userAvatar.imageUrl} data-ai-hint={userAvatar.imageHint} />}
                                         <AvatarFallback>U</AvatarFallback>
                                     </Avatar>
                                 </div>
