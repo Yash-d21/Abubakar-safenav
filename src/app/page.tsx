@@ -40,11 +40,11 @@ const features = [
 
 export default function LandingPage() {
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
+    <div className="bg-background text-foreground min-h-screen">
        <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('https://storage.googleapis.com/aai-web-samples/user-provided/her-way-background.jpg')",
+          backgroundImage: "url('https://images.unsplash.com/photo-1473849153525-756d1a45f949?q=80&w=2070&auto=format&fit=crop')",
         }}
       />
       <div className="absolute inset-0 bg-black/60" />
@@ -57,7 +57,7 @@ export default function LandingPage() {
           </div>
           <nav>
             <Link href="/login">
-              <Button variant="outline" className="text-white border-white bg-transparent hover:bg-gray-800 hover:text-white">
+              <Button variant="outline" className="text-white border-white bg-transparent hover:bg-white/10 hover:text-white">
                 Login
               </Button>
             </Link>
@@ -65,7 +65,7 @@ export default function LandingPage() {
         </header>
 
         <main className="container mx-auto px-6 py-16 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold font-headline leading-tight">
+          <h1 className="text-4xl md:text-6xl font-extrabold font-headline leading-tight text-white">
             Navigate Your World with <span className="text-primary">Confidence</span>.
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
@@ -81,27 +81,27 @@ export default function LandingPage() {
         </main>
       </div>
 
-      <section id="features" className="bg-gray-950/50 py-20 relative z-10">
+      <section id="features" className="bg-background/80 backdrop-blur-sm py-20 relative z-10">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">A New Standard in Personal Safety</h2>
-            <p className="mt-2 text-gray-400">Powered by cutting-edge AI and real-time data.</p>
+            <p className="mt-2 text-muted-foreground">Powered by cutting-edge AI and real-time data.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-gray-800/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-gray-800 transition-colors duration-300">
+              <div key={index} className="bg-card rounded-lg p-6 flex flex-col items-start text-left hover:bg-card/90 transition-colors duration-300 hover:shadow-xl">
                 <div className="bg-primary/10 text-primary p-3 rounded-full mb-4">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-2">{feature.name}</h3>
-                <p className="text-gray-400 text-sm">{feature.description}</p>
+                <p className="text-muted-foreground text-sm">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
       
-       <footer className="container mx-auto px-6 py-8 text-center text-gray-500 relative z-10">
+       <footer className="container mx-auto px-6 py-8 text-center text-gray-400 relative z-10 bg-background/80">
           <p>&copy; {new Date().getFullYear()} Her-Way. All rights reserved.</p>
        </footer>
     </div>

@@ -15,7 +15,7 @@ import { Logo } from '@/components/logo';
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader className="text-center">
           <Link href="/" className="mb-4 flex justify-center">
