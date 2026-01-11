@@ -45,7 +45,7 @@ export default function LandingPage() {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('https://mere-gray-8mxvfgwlx9.edgeone.app/WhatsApp%20Image%202026-01-11%20at%2012.36.20%20PM.jpeg')",
+            backgroundImage: "url('https://endless-copper-q9hpxzmgmc.edgeone.app')",
           }}
         />
         <div className="absolute inset-0 bg-black/60" />
