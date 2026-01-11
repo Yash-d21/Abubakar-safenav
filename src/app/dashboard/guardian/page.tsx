@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AlertTriangle, Map, Phone, ShieldCheck } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { MapCard } from '@/components/dashboard/map-card';
 
 const protectedUsers = [
     {
@@ -29,57 +29,34 @@ const protectedUsers = [
 export default function GuardianDashboard() {
   const sosUser = protectedUsers.find(u => u.status === 'SOS Active');
   const safeUsers = protectedUsers.filter(u => u.status !== 'SOS Active');
-  const sosMapImage = PlaceHolderImages.find(p => p.id === sosUser?.mapId);
-
+  
   return (
     <div className="grid gap-4 md:gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 grid auto-rows-max items-start gap-4 md:gap-8">
-            <Card className="border-destructive">
+             <Card className="border-destructive">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-destructive">
                         <AlertTriangle className="h-6 w-6 animate-pulse" />
                         Active SOS Event
                     </CardTitle>
                     <CardDescription>
-                        {sosUser?.name} has activated their SOS. Their live location and feed are now available.
+                        {sosUser?.name} has activated their SOS. Their live location is now available.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {sosUser ? (
                         <>
-                        <div className="aspect-[4/3] w-full rounded-lg overflow-hidden relative bg-muted">
-                            {sosMapImage ? (
-                                <Image
-                                    src={sosMapImage.imageUrl}
-                                    alt={`Map showing ${sosUser.name}'s location`}
-                                    fill
-                                    style={{ objectFit: 'cover' }}
-                                    data-ai-hint={sosMapImage.imageHint}
-                                />
-                            ) : <div>Map not available</div>}
-                             <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="relative">
-                                    <div className="absolute -inset-4 animate-ping rounded-full bg-red-500 opacity-75"></div>
-                                    <div className="relative rounded-full bg-red-500 p-2">
-                                        <Avatar className="h-12 w-12 border-2 border-white">
-                                            <AvatarImage src={PlaceHolderImages.find(p => p.id === sosUser.avatarId)?.imageUrl} />
-                                            <AvatarFallback>{sosUser.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            <Link href="/dashboard/sos" className="flex-1">
-                                <Button className="w-full">
-                                    <Map className="mr-2" /> View Live Feed & Chat
+                            <MapCard onFindRoute={() => {}} />
+                            <div className="flex flex-wrap gap-2">
+                                <Link href="/dashboard/sos" className="flex-1">
+                                    <Button className="w-full">
+                                        <Map className="mr-2" /> View Live Feed & Chat
+                                    </Button>
+                                </Link>
+                                <Button variant="secondary" className="flex-1">
+                                    <Phone className="mr-2" /> Call {sosUser.name}
                                 </Button>
-                            </Link>
-                             <Button variant="secondary" className="flex-1">
-                                <Phone className="mr-2" /> Call {sosUser.name}
-                            </Button>
-                        </div>
-
+                            </div>
                         </>
                     ) : (
                         <p className="text-muted-foreground text-center py-8">No active SOS events.</p>
