@@ -104,7 +104,10 @@ export function MapCard({ onFindRoute }: MapCardProps) {
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Destination" className="pl-9" defaultValue="800 Secure Ave, New York, NY" />
           </div>
-          <Button onClick={handleFindRoute} className="w-full sm:w-auto">Find Route</Button>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button onClick={handleFindRoute} className="w-full sm:w-auto">Find Route</Button>
+            <Button variant="secondary" className="w-full sm:w-auto bg-black text-white hover:bg-black/80">Link your Uber/Ola ride</Button>
+          </div>
         </div>
         <div className="aspect-[4/3] w-full rounded-lg overflow-hidden relative bg-muted">
            {mapImage ? (
