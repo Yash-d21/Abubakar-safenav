@@ -1,7 +1,7 @@
 // src/app/dashboard/sos/page.tsx
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,12 +15,6 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { summarizeChat } from '@/ai/flows/summarize-chat';
 import { Skeleton } from '@/components/ui/skeleton';
-
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-  borderRadius: '0.5rem',
-};
 
 const initialCenter = {
   lat: 40.7128,
@@ -48,19 +42,14 @@ export default function SOSPage() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLngLiteral>(initialCenter);
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isNightVisionOn, setIsNightVisionOn] = useState(false);
   const [isVoiceControlOn, setIsVoiceControlOn] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
-
-
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-  });
+  
+  const mapImage = PlaceHolderImages.find(p => p.id === 'dashboard-map');
 
   useEffect(() => {
     // Get camera permission
@@ -84,10 +73,10 @@ export default function SOSPage() {
     getCameraPermission();
 
     // Get location
-    const watchId = navigator.geolocation.watchPosition(
+    navigator.geolocation.watchPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentLocation({ lat: latitude, lng: longitude });
+        // In a real app, you'd update the marker on the map
+        console.log('New Position:', position.coords);
       },
       (error) => {
         console.error('Error getting location:', error);
@@ -101,16 +90,18 @@ export default function SOSPage() {
     );
     
     // Setup Speech Recognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.lang = 'en-US';
-      recognition.onresult = (event) => {
-        const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
-        handleVoiceCommand(command);
-      };
-      recognitionRef.current = recognition;
+    if (typeof window !== 'undefined') {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          const recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          recognition.lang = 'en-US';
+          recognition.onresult = (event) => {
+            const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+            handleVoiceCommand(command);
+          };
+          recognitionRef.current = recognition;
+        }
     }
 
 
@@ -120,7 +111,6 @@ export default function SOSPage() {
         const stream = videoRef.current.srcObject as MediaStream;
         stream.getTracks().forEach(track => track.stop());
       }
-      navigator.geolocation.clearWatch(watchId);
       recognitionRef.current?.stop();
     };
   }, [toast]);
@@ -200,9 +190,14 @@ export default function SOSPage() {
       setIsVoiceControlOn(false);
       toast({ title: 'Voice Control Disabled' });
     } else if (recognitionRef.current) {
-      recognitionRef.current.start();
-      setIsVoiceControlOn(true);
-      toast({ title: 'Voice Control Enabled', description: 'Say "start recording", "capture photo", or "send help message".' });
+      try {
+        recognitionRef.current.start();
+        setIsVoiceControlOn(true);
+        toast({ title: 'Voice Control Enabled', description: 'Say "start recording", "capture photo", or "send help message".' });
+      } catch(e) {
+        console.error(e)
+        toast({ variant: 'destructive', title: 'Could not start voice control.'});
+      }
     } else {
       toast({ variant: 'destructive', title: 'Voice control not supported on this browser.'});
     }
@@ -304,10 +299,26 @@ export default function SOSPage() {
                   <CardTitle>Live Location</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1">
-                  {isLoaded ? (
-                    <GoogleMap mapContainerStyle={containerStyle} center={currentLocation} zoom={16}>
-                      <Marker position={currentLocation} />
-                    </GoogleMap>
+                  {mapImage ? (
+                     <div className="w-full h-full rounded-lg overflow-hidden relative">
+                        <Image 
+                            src={mapImage.imageUrl}
+                            alt="Map of your current location"
+                            fill
+                            style={{ objectFit: 'cover' }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="relative">
+                                <div className="absolute -inset-2 animate-ping rounded-full bg-primary opacity-75"></div>
+                                <div className="relative rounded-full bg-primary p-2">
+                                    <Avatar>
+                                        <AvatarImage src={PlaceHolderImages.find(p => p.id === 'user-avatar-1')?.imageUrl} />
+                                        <AvatarFallback>U</AvatarFallback>
+                                    </Avatar>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
                   ) : (
                     <div>Loading Map...</div>
                   )}

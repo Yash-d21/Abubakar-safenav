@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -12,68 +13,22 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, MapPin, Share2, AlertTriangle, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useToast } from "@/hooks/use-toast";
-import { GoogleMap, useJsApiLoader, Circle, Polyline } from '@react-google-maps/api';
-import { generateRoute } from '@/ai/flows/generate-route';
-import { detectHazards } from '@/ai/flows/detect-hazards';
-
-const containerStyle = {
-  width: '100%',
-  height: '100%',
-  borderRadius: '0.5rem',
-};
-
-const center = {
-  lat: 40.7128,
-  lng: -74.0060
-};
-
-const redZones = [
-  { center: { lat: 40.715, lng: -74.002 }, radius: 200 },
-  { center: { lat: 40.710, lng: -74.010 }, radius: 150 },
-];
-
-const originCoords = { lat: 40.707, lng: -74.013 };
-const destinationCoords = { lat: 40.72, lng: -73.99 };
-
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function MapCard() {
-  const { toast } = useToast()
-  const [routePolyline, setRoutePolyline] = useState<google.maps.LatLngLiteral[]>([]);
+  const { toast } = useToast();
+  const [isRouteVisible, setIsRouteVisible] = useState(false);
   const [isCheckingHazards, setIsCheckingHazards] = useState(false);
-
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""
-  });
+  
+  const mapImage = PlaceHolderImages.find(p => p.id === 'dashboard-map');
 
   const handleFindRoute = async () => {
-    if (!isLoaded) return;
-    setRoutePolyline([]);
-    
-    try {
-      const result = await generateRoute({
-        origin: `${originCoords.lat},${originCoords.lng}`,
-        destination: `${destinationCoords.lat},${destinationCoords.lng}`,
-        transportMode: 'car',
-        avoid: redZones.map(z => ({ lat: z.center.lat, lng: z.center.lng, radius: z.radius})),
-      });
-
-      setRoutePolyline(result.polyline);
-      
-      toast({
-        title: "Safest Route Found",
-        description: "We've prioritized your safety. This route avoids all red zones.",
-      });
-    } catch (error) {
-      console.error('Error fetching directions', error);
-       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Could not find a route.",
-      });
-    }
+    setIsRouteVisible(true);
+    toast({
+      title: "Safest Route Found",
+      description: "We've prioritized your safety. This route avoids all red zones.",
+    });
   };
 
   const handleShareTrip = () => {
@@ -85,13 +40,14 @@ export function MapCard() {
 
   const handleCheckHazards = async () => {
     setIsCheckingHazards(true);
-    try {
-        const result = await detectHazards({ routeDescription: "A car route from downtown to midtown New York." });
-        if (result.hasHazards) {
+    // Mocking the hazard check since the map is static
+    setTimeout(() => {
+        const hasHazards = Math.random() > 0.5;
+        if (hasHazards) {
             toast({
                 variant: "destructive",
                 title: "Hazard Alert!",
-                description: result.hazardSummary,
+                description: "A water main break has been reported on your route.",
             });
         } else {
             toast({
@@ -99,16 +55,8 @@ export function MapCard() {
                 description: "No immediate environmental hazards detected on your route.",
             });
         }
-    } catch (error) {
-        console.error("Error checking for hazards:", error);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Could not check for hazards at this time.",
-        });
-    } finally {
         setIsCheckingHazards(false);
-    }
+    }, 1500);
   }
 
   return (
@@ -130,52 +78,41 @@ export function MapCard() {
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Destination" className="pl-9" defaultValue="800 Secure Ave, New York, NY" />
           </div>
-          <Button onClick={handleFindRoute} className="w-full sm:w-auto" disabled={!isLoaded}>Find Route</Button>
+          <Button onClick={handleFindRoute} className="w-full sm:w-auto">Find Route</Button>
         </div>
         <div className="aspect-[4/3] w-full rounded-lg overflow-hidden relative bg-muted">
-          {isLoaded ? (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={center}
-              zoom={14}
-              options={{
-                disableDefaultUI: true,
-                zoomControl: true,
-              }}
-            >
-              {routePolyline.length > 0 && (
-                <Polyline
-                    path={routePolyline}
-                    options={{
-                        strokeColor: 'hsl(var(--primary))',
-                        strokeOpacity: 0.8,
-                        strokeWeight: 6,
-                    }}
+           {mapImage ? (
+                <Image 
+                    src={mapImage.imageUrl}
+                    alt="Map of a city"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    data-ai-hint={mapImage.imageHint}
                 />
-              )}
-               {redZones.map((zone, index) => (
-                <Circle
-                  key={index}
-                  center={zone.center}
-                  radius={zone.radius}
-                  options={{
-                    strokeColor: '#FF0000',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: '#FF0000',
-                    fillOpacity: 0.35,
-                  }}
-                />
-              ))}
-            </GoogleMap>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <p>Loading map...</p>
-            </div>
-          )}
+           ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                    <p>Map image not available.</p>
+                </div>
+           )}
+            {isRouteVisible && (
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                    <path
+                        d="M 50 250 Q 150 200 250 150 T 350 50"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth="4"
+                        fill="none"
+                        strokeOpacity="0.8"
+                        strokeDasharray="8"
+                    >
+                         <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="5s" repeatCount="indefinite" />
+                    </path>
+                    <circle cx="50" cy="250" r="5" fill="hsl(var(--primary))" />
+                    <circle cx="350" cy="50" r="5" fill="hsl(var(--primary))" />
+                </svg>
+            )}
         </div>
       </CardContent>
-      {routePolyline.length > 0 && (
+      {isRouteVisible && (
         <CardFooter className="border-t pt-6 flex-wrap gap-2">
             <Button onClick={handleShareTrip} className="w-full sm:w-auto">
               <Share2 className="mr-2 h-4 w-4" />
