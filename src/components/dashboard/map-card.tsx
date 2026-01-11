@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, MapPin, Share2, AlertTriangle, Loader2 } from 'lucide-react';
+import { ArrowRight, MapPin, Share2, AlertTriangle, Loader2, Shield, Hospital } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -47,17 +47,21 @@ export function MapCard() {
         toast({
             variant: "destructive",
             title: "Hazard Alert!",
-            description: "A water main break has been reported on your route. Hazardous areas are marked in red.",
+            description: "A water main break has been reported near your route. Hazardous areas are marked in red.",
         });
         setIsCheckingHazards(false);
     }, 1500);
   }
 
   const hazardLocations = [
-    { cx: "70", cy: "80" },
-    { cx: "350", cy: "250" },
-    { cx: "380", cy: "200" },
+    { cx: "120", cy: "150" },
+    { cx: "300", cy: "100" },
   ];
+
+  const safePois = [
+      { component: Shield, x: 160, y: 190, color: 'blue' },
+      { component: Hospital, x: 270, y: 110, color: 'green' },
+  ]
 
   return (
     <Card>
@@ -96,6 +100,7 @@ export function MapCard() {
            )}
             {isRouteVisible && (
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                    {/* The Route Path */}
                     <path
                         d="M 50 250 Q 150 200 250 150 T 350 50"
                         stroke="hsl(var(--primary))"
@@ -108,6 +113,14 @@ export function MapCard() {
                     </path>
                     <circle cx="50" cy="250" r="5" fill="hsl(var(--primary))" />
                     <circle cx="350" cy="50" r="5" fill="hsl(var(--primary))" />
+
+                    {/* Safe POI Icons */}
+                    {safePois.map((Poi, index) => (
+                        <g key={index} transform={`translate(${Poi.x - 12}, ${Poi.y - 12})`}>
+                            <rect x="0" y="0" width="24" height="24" rx="6" fill="white" stroke={Poi.color} strokeWidth="2" />
+                            <Poi.component className="text-foreground" x="4" y="4" width="16" height="16" stroke={Poi.color} />
+                        </g>
+                    ))}
                 </svg>
             )}
             {showHazards && (
