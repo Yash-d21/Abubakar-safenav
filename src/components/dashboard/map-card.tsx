@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
   Card,
@@ -31,6 +31,25 @@ export function MapCard() {
       title: "Safest Route Found",
       description: "We've prioritized your safety. This route avoids all red zones.",
     });
+
+    // Start the safety check-in timer
+    setTimeout(() => {
+        toast({
+            title: "Are you still there?",
+            description: "We've noticed you haven't moved in a while. Tap to confirm you're okay.",
+            duration: 20000, // 20 seconds to respond
+            action: (
+                <Button variant="secondary" onClick={() => {
+                    toast({
+                        title: "Thanks for checking in!",
+                        description: "We'll continue to monitor your trip.",
+                    });
+                }}>
+                    I'm Safe
+                </Button>
+            ),
+        });
+    }, 20000); // 20 seconds after route is found
   };
 
   const handleShareTrip = () => {
