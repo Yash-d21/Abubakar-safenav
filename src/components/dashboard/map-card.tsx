@@ -54,9 +54,9 @@ export function MapCard() {
   }
 
   const hazardLocations = [
-    { cx: "200", cy: "180" },
-    { cx: "280", cy: "120" },
-    { cx: "310", cy: "140" },
+    { cx: "70", cy: "80" },
+    { cx: "350", cy: "250" },
+    { cx: "380", cy: "200" },
   ];
 
   return (
