@@ -15,12 +15,14 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, MapPin, Share2, AlertTriangle, Loader2, Shield, Hospital } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { SafetyCheckInDialog } from './safety-check-in-dialog';
 
 export function MapCard() {
   const { toast } = useToast();
   const [isRouteVisible, setIsRouteVisible] = useState(false);
   const [isCheckingHazards, setIsCheckingHazards] = useState(false);
   const [showHazards, setShowHazards] = useState(false);
+  const [isSafetyCheckVisible, setIsSafetyCheckVisible] = useState(false);
   
   const mapImage = PlaceHolderImages.find(p => p.id === 'dashboard-map');
 
@@ -34,22 +36,16 @@ export function MapCard() {
 
     // Start the safety check-in timer
     setTimeout(() => {
-        toast({
-            title: "Are you still there?",
-            description: "We've noticed you haven't moved in a while. Tap to confirm you're okay.",
-            duration: 20000, // 20 seconds to respond
-            action: (
-                <Button variant="secondary" onClick={() => {
-                    toast({
-                        title: "Thanks for checking in!",
-                        description: "We'll continue to monitor your trip.",
-                    });
-                }}>
-                    I'm Safe
-                </Button>
-            ),
-        });
+        setIsSafetyCheckVisible(true);
     }, 20000); // 20 seconds after route is found
+  };
+  
+  const handleConfirmSafe = () => {
+    setIsSafetyCheckVisible(false);
+    toast({
+        title: "Thanks for checking in!",
+        description: "We'll continue to monitor your trip.",
+    });
   };
 
   const handleShareTrip = () => {
@@ -83,6 +79,7 @@ export function MapCard() {
   ]
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">Intelligent Safety Routing</CardTitle>
@@ -168,5 +165,11 @@ export function MapCard() {
         </CardFooter>
       )}
     </Card>
+    <SafetyCheckInDialog 
+        open={isSafetyCheckVisible} 
+        onOpenChange={setIsSafetyCheckVisible}
+        onConfirmSafe={handleConfirmSafe}
+    />
+    </>
   );
 }
