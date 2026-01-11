@@ -81,7 +81,7 @@ export default function LandingPage() {
         </main>
       </div>
 
-      <section id="features" className="bg-background/80 backdrop-blur-sm py-20 relative z-10">
+      <section id="features" className="bg-card/80 backdrop-blur-sm py-20 relative z-10">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold font-headline">A New Standard in Personal Safety</h2>
@@ -89,7 +89,7 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-card rounded-lg p-6 flex flex-col items-start text-left hover:bg-card/90 transition-colors duration-300 hover:shadow-xl">
+              <div key={index} className="bg-background/50 rounded-lg p-6 flex flex-col items-start text-left hover:bg-background/70 transition-colors duration-300 hover:shadow-xl">
                 <div className="bg-primary/10 text-primary p-3 rounded-full mb-4">
                   {feature.icon}
                 </div>
@@ -101,7 +101,7 @@ export default function LandingPage() {
         </div>
       </section>
       
-       <footer className="container mx-auto px-6 py-8 text-center text-gray-400 relative z-10 bg-background/80">
+       <footer className="container mx-auto px-6 py-8 text-center text-gray-400 relative z-10 bg-card/80">
           <p>&copy; {new Date().getFullYear()} Her-Way. All rights reserved.</p>
        </footer>
     </div>
