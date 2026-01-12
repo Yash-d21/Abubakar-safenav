@@ -241,67 +241,66 @@ export default function SOSPage() {
 
 
   return (
-    <div className="fixed inset-0 z-50 bg-background">
-      <ScrollArea className="h-full w-full">
-        <div className="flex h-full min-h-screen flex-col gap-4 p-4">
-          <div className="flex-shrink-0">
-            <div className="flex items-center justify-between rounded-lg bg-destructive p-3 text-destructive-foreground">
-              <div className="flex items-center gap-2">
-                <Siren className="h-6 w-6 animate-pulse" />
-                <h1 className="font-headline text-xl font-bold">SOS Mode ACTIVE</h1>
-              </div>
-              <Button variant="destructive" className="bg-destructive-foreground text-destructive hover:bg-destructive-foreground/90" onClick={handleEndSOS}>
-                End SOS
-              </Button>
+    <div className="flex h-screen flex-col gap-4 p-4 bg-background">
+        <div className="flex-shrink-0">
+        <div className="flex items-center justify-between rounded-lg bg-destructive p-3 text-destructive-foreground">
+            <div className="flex items-center gap-2">
+            <Siren className="h-6 w-6 animate-pulse" />
+            <h1 className="font-headline text-xl font-bold">SOS Mode ACTIVE</h1>
             </div>
-          </div>
-  
-          <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-            <div className="flex flex-col gap-4 lg:col-span-2 xl:col-span-3">
-              <Card className="flex flex-1 flex-col">
-                <CardHeader>
-                  <CardTitle>Live Feed</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-1 gap-2 rounded-b-lg bg-black p-2">
-                  <div className="relative flex-1">
-                    <video ref={videoRef} className={cn('h-full w-full rounded-md object-cover', isNightVisionOn && 'night-vision')} autoPlay muted playsInline />
-                    {hasCameraPermission === false && (
-                      <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/80">
-                        <Alert variant="destructive" className="w-auto">
-                          <Siren className="h-4 w-4" />
-                          <AlertTitle>Camera Access Required</AlertTitle>
-                          <AlertDescription>Camera is required to share your live feed.</AlertDescription>
-                        </Alert>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col justify-center gap-2 rounded-lg bg-black/50 p-2">
-                    <Button variant={isRecording ? 'destructive' : 'secondary'} onClick={handleToggleRecording} size="sm" aria-label="Toggle Recording" className="h-auto flex-col gap-1 py-2">
-                      {isRecording ? <VideoOff /> : <Video />}
-                      <span>{isRecording ? 'Stop' : 'Record'}</span>
-                    </Button>
-                    <Button variant="secondary" onClick={handleCapturePhoto} size="sm" aria-label="Capture Photo" className="h-auto flex-col gap-1 py-2">
-                      <Camera />
-                      <span>Capture</span>
-                    </Button>
-                    <Button variant="secondary" onClick={() => setIsNightVisionOn((prev) => !prev)} size="sm" data-active={isNightVisionOn} className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground h-auto flex-col gap-1 py-2" aria-label="Toggle Night Vision">
-                      <Moon />
-                      <span>Night Vision</span>
-                    </Button>
-                     <Button variant={isVoiceControlOn ? 'default' : 'secondary'} onClick={handleToggleVoiceControl} size="sm" className="h-auto flex-col gap-1 py-2" aria-label="Toggle Voice Control">
-                      {isVoiceControlOn ? <MicOff/> : <Mic />}
-                      <span>{isVoiceControlOn ? 'Voice Off' : 'Voice On'}</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-1 flex-col">
-                <CardHeader>
-                  <CardTitle>Live Location</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  {mapImage ? (
-                     <div className="w-full h-full rounded-lg overflow-hidden relative">
+            <Button variant="destructive" className="bg-destructive-foreground text-destructive hover:bg-destructive-foreground/90" onClick={handleEndSOS}>
+            End SOS
+            </Button>
+        </div>
+        </div>
+
+        <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-3 xl:grid-cols-4 overflow-hidden">
+        <div className="flex flex-col gap-4 lg:col-span-2 xl:col-span-3">
+            <div className="grid md:grid-cols-2 gap-4 flex-1">
+                <Card className="flex flex-1 flex-col">
+                    <CardHeader>
+                        <CardTitle>Live Feed</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-1 gap-2 rounded-b-lg bg-black p-2">
+                        <div className="relative flex-1">
+                        <video ref={videoRef} className={cn('h-full w-full rounded-md object-cover', isNightVisionOn && 'night-vision')} autoPlay muted playsInline />
+                        {hasCameraPermission === false && (
+                            <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/80">
+                            <Alert variant="destructive" className="w-auto">
+                                <Siren className="h-4 w-4" />
+                                <AlertTitle>Camera Access Required</AlertTitle>
+                                <AlertDescription>Camera is required to share your live feed.</AlertDescription>
+                            </Alert>
+                            </div>
+                        )}
+                        </div>
+                        <div className="flex flex-col justify-center gap-2 rounded-lg bg-black/50 p-2">
+                        <Button variant={isRecording ? 'destructive' : 'secondary'} onClick={handleToggleRecording} size="sm" aria-label="Toggle Recording" className="h-auto flex-col gap-1 py-2">
+                            {isRecording ? <VideoOff /> : <Video />}
+                            <span>{isRecording ? 'Stop' : 'Record'}</span>
+                        </Button>
+                        <Button variant="secondary" onClick={handleCapturePhoto} size="sm" aria-label="Capture Photo" className="h-auto flex-col gap-1 py-2">
+                            <Camera />
+                            <span>Capture</span>
+                        </Button>
+                        <Button variant="secondary" onClick={() => setIsNightVisionOn((prev) => !prev)} size="sm" data-active={isNightVisionOn} className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground h-auto flex-col gap-1 py-2" aria-label="Toggle Night Vision">
+                            <Moon />
+                            <span>Night Vision</span>
+                        </Button>
+                        <Button variant={isVoiceControlOn ? 'default' : 'secondary'} onClick={handleToggleVoiceControl} size="sm" className="h-auto flex-col gap-1 py-2" aria-label="Toggle Voice Control">
+                            {isVoiceControlOn ? <MicOff/> : <Mic />}
+                            <span>{isVoiceControlOn ? 'Voice Off' : 'Voice On'}</span>
+                        </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card className="flex flex-1 flex-col">
+                    <CardHeader>
+                        <CardTitle>Live Location</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                    {mapImage ? (
+                        <div className="w-full h-full rounded-lg overflow-hidden relative">
                         <Image 
                             src={mapImage.imageUrl}
                             alt="Map of your current location"
@@ -316,69 +315,68 @@ export default function SOSPage() {
                             </circle>
                             <circle cx="150" cy="180" r="5" fill="white" />
                         </svg>
-                     </div>
-                  ) : (
-                    <div>Loading Map...</div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-  
-            <div className="flex flex-col lg:col-span-1 xl:col-span-1">
-              <Card className="flex flex-1 flex-col">
-                <CardHeader className="flex-row items-center justify-between">
-                  <CardTitle>Guardian Chat</CardTitle>
-                   <Button variant="outline" size="sm" onClick={handleSummarize} disabled={isSummarizing}>
-                      {isSummarizing ? <Skeleton className="h-4 w-4 animate-spin" /> : <BrainCircuit />}
-                      <span className="ml-2">Get Summary</span>
-                  </Button>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden">
-                  <ScrollArea className="-mr-4 flex-1 pr-4">
-                    <div className="space-y-4">
-                      {comments.map((comment, index) => {
-                        const avatar = PlaceHolderImages.find((p) => p.id === comment.avatarId);
-                        const isAI = comment.author === 'AI Guardian';
-                        return (
-                          <div key={index} className={cn("flex items-start gap-3", isAI && 'items-center')}>
-                            <Avatar className="h-8 w-8">
-                              {isAI ? <Bot className="h-8 w-8 text-primary" /> : (
-                                <>
-                                  {avatar && <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />}
-                                  <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
-                                </>
-                              )}
-                            </Avatar>
-                            <div className={cn("flex-1 rounded-lg p-3", isAI ? 'bg-primary/10 border border-primary/20' : 'bg-muted')}>
-                              <div className="flex items-center justify-between">
-                                <p className="text-sm font-semibold">{comment.author}</p>
-                                <p className="text-xs text-muted-foreground">{comment.time}</p>
-                              </div>
-                              <p className="text-sm">{comment.text}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </ScrollArea>
-                   <div className="flex-shrink-0 space-y-2">
-                        <div className="grid grid-cols-2 gap-2">
-                            <Button variant="outline" onClick={() => handleSendComment({} as React.FormEvent, 'I need help urgently!')}>Send Help Message</Button>
-                            <Button variant="outline" onClick={() => handleGuardianAction(`I'm on my way.`)}>On My Way</Button>
                         </div>
-                        <form className="flex items-center gap-2" onSubmit={handleSendComment}>
-                            <Input placeholder="Type a message..." value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-                            <Button type="submit" size="icon" aria-label="Send Message">
-                                <Send className="h-4 w-4" />
-                            </Button>
-                        </form>
-                    </div>
-                </CardContent>
-              </Card>
+                    ) : (
+                        <div>Loading Map...</div>
+                    )}
+                    </CardContent>
+                </Card>
             </div>
-          </div>
         </div>
-      </ScrollArea>
+
+        <div className="flex flex-col lg:col-span-1 xl:col-span-1 h-full">
+            <Card className="flex flex-1 flex-col">
+            <CardHeader className="flex-row items-center justify-between">
+                <CardTitle>Guardian Chat</CardTitle>
+                <Button variant="outline" size="sm" onClick={handleSummarize} disabled={isSummarizing}>
+                    {isSummarizing ? <Skeleton className="h-4 w-4 animate-spin" /> : <BrainCircuit />}
+                    <span className="ml-2">Get Summary</span>
+                </Button>
+            </CardHeader>
+            <CardContent className="flex flex-1 flex-col gap-4 overflow-hidden">
+                <ScrollArea className="-mr-4 flex-1 pr-4">
+                <div className="space-y-4">
+                    {comments.map((comment, index) => {
+                    const avatar = PlaceHolderImages.find((p) => p.id === comment.avatarId);
+                    const isAI = comment.author === 'AI Guardian';
+                    return (
+                        <div key={index} className={cn("flex items-start gap-3", isAI && 'items-center')}>
+                        <Avatar className="h-8 w-8">
+                            {isAI ? <Bot className="h-8 w-8 text-primary" /> : (
+                            <>
+                                {avatar && <AvatarImage src={avatar.imageUrl} data-ai-hint={avatar.imageHint} />}
+                                <AvatarFallback>{comment.author.charAt(0)}</AvatarFallback>
+                            </>
+                            )}
+                        </Avatar>
+                        <div className={cn("flex-1 rounded-lg p-3", isAI ? 'bg-primary/10 border border-primary/20' : 'bg-muted')}>
+                            <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold">{comment.author}</p>
+                            <p className="text-xs text-muted-foreground">{comment.time}</p>
+                            </div>
+                            <p className="text-sm">{comment.text}</p>
+                        </div>
+                        </div>
+                    );
+                    })}
+                </div>
+                </ScrollArea>
+                <div className="flex-shrink-0 space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" onClick={() => handleSendComment({} as React.FormEvent, 'I need help urgently!')}>Send Help Message</Button>
+                        <Button variant="outline" onClick={() => handleGuardianAction(`I'm on my way.`)}>On My Way</Button>
+                    </div>
+                    <form className="flex items-center gap-2" onSubmit={handleSendComment}>
+                        <Input placeholder="Type a message..." value={newComment} onChange={(e) => setNewComment(e.target.value)} />
+                        <Button type="submit" size="icon" aria-label="Send Message">
+                            <Send className="h-4 w-4" />
+                        </Button>
+                    </form>
+                </div>
+            </CardContent>
+            </Card>
+        </div>
+        </div>
     </div>
   );
 }
