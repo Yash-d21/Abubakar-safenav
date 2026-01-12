@@ -81,7 +81,6 @@ export default function SOSPage() {
         console.log('New Position:', position.coords);
       },
       (error) => {
-        console.error('Error getting location:', error);
         toast({
           variant: 'destructive',
           title: 'Location Access Denied',
