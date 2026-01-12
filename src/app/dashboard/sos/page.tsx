@@ -1,3 +1,4 @@
+
 // src/app/dashboard/sos/page.tsx
 'use client';
 import { useState, useEffect, useRef } from 'react';
@@ -308,17 +309,13 @@ export default function SOSPage() {
                             fill
                             style={{ objectFit: 'cover' }}
                         />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="relative">
-                                <div className="absolute -inset-2 animate-ping rounded-full bg-primary opacity-75"></div>
-                                <div className="relative rounded-full bg-primary p-2">
-                                    <Avatar>
-                                        {userAvatar && <AvatarImage src={userAvatar.imageUrl} data-ai-hint={userAvatar.imageHint} />}
-                                        <AvatarFallback>U</AvatarFallback>
-                                    </Avatar>
-                                </div>
-                            </div>
-                        </div>
+                        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                            <circle cx="150" cy="180" r="8" fill="blue" stroke="white" strokeWidth="2" opacity="0.9">
+                                <animate attributeName="r" from="8" to="12" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                                <animate attributeName="opacity" from="0.9" to="0.3" dur="1.5s" begin="0s" repeatCount="indefinite" />
+                            </circle>
+                            <circle cx="150" cy="180" r="5" fill="white" />
+                        </svg>
                      </div>
                   ) : (
                     <div>Loading Map...</div>
