@@ -50,7 +50,7 @@ export default function SOSPage() {
   const [isVoiceControlOn, setIsVoiceControlOn] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   
-  const mapImage = PlaceHolderImages.find(p => p.id === 'guardian-map-1');
+  const mapImage = PlaceHolderImages.find(p => p.id === 'dashboard-map');
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar-1');
 
   useEffect(() => {
@@ -307,6 +307,7 @@ export default function SOSPage() {
                             alt="Map of your current location"
                             fill
                             style={{ objectFit: 'cover' }}
+                            data-ai-hint={mapImage.imageHint}
                         />
                         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
                             <circle cx="150" cy="180" r="8" fill="blue" stroke="white" strokeWidth="2" opacity="0.9">
