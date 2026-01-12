@@ -41,7 +41,7 @@ const features = [
 export default function LandingPage() {
   return (
     <div className="bg-background text-foreground min-h-screen">
-      <div className="relative">
+      <div className="relative min-h-screen flex flex-col">
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -50,7 +50,7 @@ export default function LandingPage() {
         />
         <div className="absolute inset-0 bg-black/60" />
 
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col flex-1">
           <header className="container mx-auto px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <Logo className="w-8 h-8 text-white" />
@@ -65,7 +65,7 @@ export default function LandingPage() {
             </nav>
           </header>
 
-          <main className="container mx-auto px-6 py-16 text-center">
+          <main className="container mx-auto px-6 py-16 text-center flex-1 flex flex-col justify-center">
             <h1 className="text-4xl md:text-6xl font-extrabold font-headline leading-tight text-white">
               Navigate Your World with <span className="text-primary">Confidence</span>.
             </h1>
