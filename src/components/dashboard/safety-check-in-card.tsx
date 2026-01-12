@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Timer, ShieldCheck, BellRing, Square, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
+import { useRouter } from 'next/navigation';
 
 type Status = 'idle' | 'running' | 'alerted';
 
@@ -20,6 +21,7 @@ export function SafetyCheckInCard() {
   const [timer, setTimer] = useState(0);
   const totalTime = 30; // 30 seconds for demonstration
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     if (status !== 'running' || timer <= 0) {
@@ -28,8 +30,9 @@ export function SafetyCheckInCard() {
         toast({
           variant: 'destructive',
           title: 'Check-in Missed!',
-          description: 'An alert has been sent to your guardians.',
+          description: 'An alert has been sent. Activating SOS mode.',
         });
+        router.push('/dashboard/sos');
       }
       return;
     }
@@ -39,7 +42,7 @@ export function SafetyCheckInCard() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [status, timer, toast]);
+  }, [status, timer, toast, router]);
 
   const startCheckIn = () => {
     setTimer(totalTime);
